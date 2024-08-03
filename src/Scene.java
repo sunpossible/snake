@@ -24,9 +24,11 @@ public class Scene extends JFrame {
     public final int pixel_rightBar = 100; //右邊訊息藍的寬度 單位是像素(pixel)
 
 
-
-
     private Snake snake;
+
+    public int getPixel(int i, int padding, int pixels_per_unit){
+        return 1+padding+i*pixels_per_unit;
+    }
 
 
     public void initUI() {
@@ -78,6 +80,14 @@ public class Scene extends JFrame {
                         g.drawLine(padding,padding+i*pixel_per_unit, padding+width*pixel_per_unit,padding+i*22); // 畫橫線
                     }
                 }
+                //todo 劃出食物
+                Coordinate food = snake.getFood();   //取得食物的座標
+                g.setColor(Color.green);    //設定食物的顏色
+                g.fillOval(getPixel(food.x, padding, pixel_per_unit), getPixel(food.y, padding, pixel_per_unit), 20,20);
+
+                //todo 劃出蛇類
+
+                //todo 劃出蛇的身體
             }
         };
 
@@ -94,16 +104,38 @@ public class Scene extends JFrame {
         JMenuItem remove_net = new JMenuItem("Remove net"); remove_net.setFont(f2); Settings.add(remove_net);
         JMenuItem remove_padding = new JMenuItem("Remove padding"); remove_padding.setFont(f2); Settings.add(remove_padding);
 
-
+        //todo 按鈕的觸發事件
+        remove_net.addActionListener(e -> {
+            if(!show_grid){
+                show_grid = true;
+                remove_net.setText("hide grid");
+            }
+            else{
+                show_grid = false;
+                remove_net.setText("show grid");
+            }
+            paintPanel.repaint();     //重新繪製畫面
+        });
+        remove_padding.addActionListener(e ->{
+            if(!show_padding){
+                show_padding = true;
+                remove_padding.setText("hide padding");
+            }
+            else{
+                show_padding = false;
+                remove_padding.setText("show padding");
+            }
+            paintPanel.repaint();
+        });
+        //todo 完成"幫助"的觸發事件
     }
 
 
     public void run(){
         System.out.println("game running");
-        //  todo 遊戲執行細節
+        snake = new Snake(this);
         setFocusable(true);   //設置焦點
         setVisible(true);     //顯示遊戲視窗
-        snake = new Snake();  //初始化貪吃蛇物件
     }
 
 
