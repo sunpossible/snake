@@ -1,7 +1,12 @@
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Random;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import static java.nio.file.Files.move;
 
 public class Snake {
 
@@ -20,7 +25,7 @@ public class Snake {
         Coordinate head = new Coordinate(0, 0);
         body.addFirst(head);   //將舌頭添加到身體列隊第一個位置
         produceFood();  //生成食物
-        //todo 讓蛇開始移動
+        run();   //snake start moving
     }
 
     public Coordinate randomCoor() {  //生成隨機座標
@@ -50,6 +55,24 @@ public class Snake {
         return res;
     }
 
+    public void move(){  //蛇身體移動
+        Coordinate head, next_coor = new Coordinate(0,0);  //定義蛇頭和下一個時間點的座標
+        head = body.getFirst();
+        if(direction == Direction.UP)
+            next_coor = new Coordinate(head.x, head.y -1);
+        else if(direction == Direction.DOWN)
+            next_coor = new Coordinate(head.x, head.y +1);
+        else if(direction == Direction.LEFT)
+            next_coor = new Coordinate(head.x-1, head.y );
+        else if(direction == Direction.RIGHT)
+            next_coor = new Coordinate(head.x+1, head.y);
+    }
+
+    
+    public void show(){
+        GameUI.repaint();  //重新繪製畫面 =刷新
+    }
+
 
     public void produceFood() {
         food = randomCoor();
@@ -57,5 +80,17 @@ public class Snake {
 
     public Coordinate getFood() {
         return food;
+    }
+
+    public Deque<Coordinate> getBody() {
+        return body;
+    }
+
+    public void run() {
+        executor = Executors.newSingleThreadScheduledExecutor();  //創建單線程調度執行器
+        executor.scheduleAtFixedRate(() -> {
+            move();  //moving snake
+            show();   //刷新顯示
+        }, 0, 500, TimeUnit.MILLISECONDS);   //初始延遲為0毫秒每500毫秒執行一次
     }
 }

@@ -1,9 +1,18 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.Deque;
 
 public class Scene extends JFrame {
 
     private JPanel paintPanel;    //畫板 幫助使用者介面畫上線條
+
+    public boolean pause = false;  //暫停標籤
+
+    public boolean quit = false;  //退出標籤
+
+    public boolean die = false;   //死亡標籤
 
     private boolean show_padding = true;  //是否出邊框線
 
@@ -85,7 +94,11 @@ public class Scene extends JFrame {
                 g.setColor(Color.green);    //設定食物的顏色
                 g.fillOval(getPixel(food.x, padding, pixel_per_unit), getPixel(food.y, padding, pixel_per_unit), 20,20);
 
-                //todo 劃出蛇類
+                //todo 劃出蛇頭
+                Deque<Coordinate> body = snake.getBody();   //get snake body's location
+                Coordinate head = body.getFirst();  // get snake head's location
+                g.setColor(Color.red);         // color of snake head
+                g.fillRoundRect(getPixel(head.x, padding, pixel_per_unit), getPixel(head.y, padding, pixel_per_unit), 20, 20, 10,10);  //繪製蛇頭
 
                 //todo 劃出蛇的身體
             }
@@ -104,7 +117,8 @@ public class Scene extends JFrame {
         JMenuItem remove_net = new JMenuItem("Remove net"); remove_net.setFont(f2); Settings.add(remove_net);
         JMenuItem remove_padding = new JMenuItem("Remove padding"); remove_padding.setFont(f2); Settings.add(remove_padding);
 
-        //todo 按鈕的觸發事件
+
+        this.addKeyListener(new MyKeyListener());  //添加鍵盤的監聽器
         remove_net.addActionListener(e -> {
             if(!show_grid){
                 show_grid = true;
@@ -146,5 +160,53 @@ public class Scene extends JFrame {
         game.initUI();             //初始化遊戲畫面
         game.run();                //開始遊戲
         System.out.println("Game starting...");
+    }
+
+    private class MyKeyListener implements KeyListener{
+        @Override
+        public void keyTyped(KeyEvent e) {
+
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            int key = e.getKeyCode();   //獲取按鍵代碼
+            Direction direction = snake.direction;   //獲取當前蛇的方向
+
+            if(key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D){
+                if(!quit && direction != Direction.LEFT)
+                    snake.direction = Direction.RIGHT;
+            }
+            else if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A){
+                if(!quit && direction != Direction.RIGHT)
+                    snake.direction = Direction.LEFT;
+            }
+            else if (key == KeyEvent.VK_UP || key == KeyEvent.VK_W){
+                if(!quit && direction != Direction.DOWN)
+                    snake.direction = Direction.UP;
+            }
+            else if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S){
+                if(!quit && direction != Direction.UP)
+                    snake.direction = Direction.DOWN;
+            }
+            else if(key == KeyEvent.VK_ESCAPE){
+                //todo restart()
+            }
+            else if(key == KeyEvent.VK_SPACE){
+                if(!pause){  //如果沒有暫停
+                    pause = true;  //設置為暫停
+                    System.out.println("Paused...");
+                }
+                else{  //如果已暫停
+                    pause = false;  //取消暫停
+                    System.out.println("Start...");
+                }
+            }
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+
+        }
     }
 }
