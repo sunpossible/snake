@@ -66,9 +66,38 @@ public class Snake {
             next_coor = new Coordinate(head.x-1, head.y );
         else if(direction == Direction.RIGHT)
             next_coor = new Coordinate(head.x+1, head.y);
+
+        if(checkDeath(next_coor)){
+            // todo 設置pause,die : 執行repaint
+        }
+        else{
+            Coordinate next_node = new Coordinate(next_coor);  //創建獨立的新節點
+            body.addFirst(next_node);  //新節點添加到蛇頭
+            if(!checkEat(next_coor)){   //有吃到食物就去除尾巴
+                body.pollLast();   //remove tail
+            }
+            else{
+                produceFood();  //create new food
+            }
+        }
     }
 
-    
+    public boolean checkDeath(Coordinate coor){  //判斷一個座標是否超出邊界代表蛇死亡
+        int rows = GameUI.height;  //獲取區域大小的高
+        int cols = GameUI.width;  //獲取區域大小的寬
+        // 0 to 19
+
+        boolean result = coor.x < 0 || coor.x >= cols || coor.y < 0 ||coor.y >= rows;
+
+        return result;
+    }
+
+    public boolean checkEat(Coordinate coor){
+        // todo 檢查有無吃到
+        return false;
+    }
+
+
     public void show(){
         GameUI.repaint();  //重新繪製畫面 =刷新
     }
