@@ -68,7 +68,11 @@ public class Snake {
             next_coor = new Coordinate(head.x+1, head.y);
 
         if(checkDeath(next_coor)){
-            // todo 設置pause,die : 執行repaint
+            //todo 設置Pause, die :執行　ｒｅｐａｉｎｔ
+            GameUI.quit = true;
+            GameUI.pause = true;
+            GameUI.die = true;
+            GameUI.repaint();
         }
         else{
             Coordinate next_node = new Coordinate(next_coor);  //創建獨立的新節點

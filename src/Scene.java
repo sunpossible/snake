@@ -106,22 +106,33 @@ public class Scene extends JFrame {
                         g.drawLine(padding,padding+i*pixel_per_unit, padding+width*pixel_per_unit,padding+i*22); // 畫橫線
                     }
                 }
-                //todo 劃出食物
+                //劃出食物
                 Coordinate food = snake.getFood();   //取得食物的座標
                 g.setColor(Color.green);    //設定食物的顏色
                 g.fillOval(getPixel(food.x, padding, pixel_per_unit), getPixel(food.y, padding, pixel_per_unit), 20,20);
 
-                //todo 劃出蛇頭
+                //劃出蛇頭
                 Deque<Coordinate> body = snake.getBody();   //get snake body's location
                 Coordinate head = body.getFirst();  // get snake head's location
                 g.setColor(Color.red);         // color of snake head
                 g.fillRoundRect(getPixel(head.x, padding, pixel_per_unit), getPixel(head.y, padding, pixel_per_unit), 20, 20, 10,10);  //繪製蛇頭
 
-                //todo 劃出蛇的身體
+                //劃出蛇的身體
                 g.setPaint(new GradientPaint(115,135,Color.CYAN,230,135,Color.MAGENTA,true));
                 for (Coordinate coor: body){
                     if(head.x == coor.x && head.y == coor.y) continue;  //跳過蛇頭
                     g.fillRoundRect(getPixel(coor.x, padding, pixel_per_unit), getPixel(coor.y, padding, pixel_per_unit), 20,20,10,10);
+                }
+
+                //當死亡時畫面所顯示訊息
+                if(die){
+                    g.setFont(new Font("微軟雅黑", Font.BOLD | Font.ITALIC,30 ));
+                    g.setColor(Color.black);
+                    g.setStroke(new BasicStroke(10,BasicStroke.CAP_BUTT,BasicStroke.JOIN_BEVEL));
+
+                    int x = this.getWidth() / 2, y = this.getHeight() / 2;
+                    g.drawString("Sorry, you die", x - 350, y -50);
+                    g.drawString("Press ESC to restart", x -350, y + 50);
                 }
             }
         };
