@@ -77,6 +77,7 @@ public class Snake {
                 body.pollLast();   //remove tail
             }
             else{
+                GameUI.updateLength(body.size());
                 produceFood();  //create new food
             }
         }
@@ -92,9 +93,8 @@ public class Snake {
         return result;
     }
 
-    public boolean checkEat(Coordinate coor){
-        // todo 檢查有無吃到
-        return false;
+    public boolean checkEat(Coordinate coor) {
+        return food.x == coor.x && food.y == coor.y;
     }
 
 

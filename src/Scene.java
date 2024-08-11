@@ -3,10 +3,23 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Deque;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Scene extends JFrame {
 
     private JPanel paintPanel;    //畫板 幫助使用者介面畫上線條
+
+    private final JLabel label1 = new JLabel("當前長度");
+
+    private final JLabel label2 = new JLabel("所花時間:");
+
+    private final JLabel Length = new JLabel("1");
+
+    private final JLabel  Time = new JLabel("");
+
+    private Timer timer;    //計時器
 
     public boolean pause = false;  //暫停標籤
 
@@ -34,6 +47,10 @@ public class Scene extends JFrame {
 
 
     private Snake snake;
+
+    public void updateLength(int length){
+        Length.setText("" + length);
+    }
 
     public int getPixel(int i, int padding, int pixels_per_unit){
         return 1+padding+i*pixels_per_unit;
@@ -101,12 +118,27 @@ public class Scene extends JFrame {
                 g.fillRoundRect(getPixel(head.x, padding, pixel_per_unit), getPixel(head.y, padding, pixel_per_unit), 20, 20, 10,10);  //繪製蛇頭
 
                 //todo 劃出蛇的身體
+                g.setPaint(new GradientPaint(115,135,Color.CYAN,230,135,Color.MAGENTA,true));
+                for (Coordinate coor: body){
+                    if(head.x == coor.x && head.y == coor.y) continue;  //跳過蛇頭
+                    g.fillRoundRect(getPixel(coor.x, padding, pixel_per_unit), getPixel(coor.y, padding, pixel_per_unit), 20,20,10,10);
+                }
             }
         };
 
         paintPanel.setOpaque(false);    //設定畫板為透明
         paintPanel.setBounds(0, 0, 900, 480);  //設定畫板邊界
         add(paintPanel);   //添加畫板到遊戲視窗
+
+
+
+        //右側遊戲資訊
+        int info_x = padding * 3 + width * pixel_per_unit;
+        add(label1); label1.setBounds(info_x,10,80,20); label1.setFont(f);
+        label1.setForeground(Color.black);   //添加並設置標籤
+        add(Length); Length.setBounds(info_x,35,80,20); Length.setFont(f); Length.setForeground(Color.black);
+        add(label2); label2.setBounds(info_x,70,80,20); label2.setFont(f); label2.setForeground(Color.black);
+        add(Time);  Time.setBounds(info_x, 95,80,20); Time.setFont(f); Time.setForeground(Color.black);
 
         // 選項欄位
         JMenuBar bar = new JMenuBar();  //創建選項欄位
@@ -150,6 +182,7 @@ public class Scene extends JFrame {
         snake = new Snake(this);
         setFocusable(true);   //設置焦點
         setVisible(true);     //顯示遊戲視窗
+        timer = new Timer();
     }
 
 
@@ -161,6 +194,63 @@ public class Scene extends JFrame {
         game.run();                //開始遊戲
         System.out.println("Game starting...");
     }
+
+    //todo 計時器的class
+
+    private class Timer{
+
+        private int hour = 0;
+
+        private int min = 0;
+
+        private int sec = 0;
+
+
+
+        public Timer(){
+            this.run();
+        }
+
+
+        public void run(){
+            ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();  //創建一個單線程執行器
+            executor.scheduleAtFixedRate(() ->{
+                if(!quit && !pause){  //如果遊戲沒有退出或暫停
+                    sec += 1;
+                    if(sec >=60){   //秒進位分
+                        sec = 0;
+                        min += 1;
+                    }
+                    if (min >= 60){   //分進位小時
+                        min = 0;
+                        hour += 1;
+                    }
+                    showTime();
+                }
+            }, 0,1000, TimeUnit.MILLISECONDS);
+        }
+
+        public void reset() {
+            hour = 0;
+            min = 0;
+            sec = 0;
+        }
+
+        public void showTime(){
+            String strTime;
+            if(hour < 10) strTime = "0" + hour + ":";
+            else strTime = hour + ":";
+
+            if(min < 10) strTime = strTime + "0" + min +":";
+            else strTime = "" +strTime + min +":";
+
+            if(sec< 10) strTime = strTime + "0" + sec;
+            else strTime = "" + strTime + sec;
+
+            Time.setText(strTime);
+        }
+    }
+
 
     private class MyKeyListener implements KeyListener{
         @Override
@@ -203,6 +293,7 @@ public class Scene extends JFrame {
                 }
             }
         }
+
 
         @Override
         public void keyReleased(KeyEvent e) {
