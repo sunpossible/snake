@@ -48,6 +48,11 @@ public class Scene extends JFrame {
 
     private Snake snake;
 
+    public void restart(){
+        System.out.println("Restarting...");
+        //todo restart function
+    }
+
     public void updateLength(int length){
         Length.setText("" + length);
     }
@@ -291,7 +296,7 @@ public class Scene extends JFrame {
                     snake.direction = Direction.DOWN;
             }
             else if(key == KeyEvent.VK_ESCAPE){
-                //todo restart()
+                restart();   //restart the game
             }
             else if(key == KeyEvent.VK_SPACE){
                 if(!pause){  //如果沒有暫停
