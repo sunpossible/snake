@@ -1,3 +1,4 @@
+import java.security.PublicKey;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Random;
@@ -117,6 +118,10 @@ public class Snake {
 
     public Deque<Coordinate> getBody() {
         return body;
+    }
+
+    public void quit(){
+        executor.shutdown();   //退出線程
     }
 
     public void run() {

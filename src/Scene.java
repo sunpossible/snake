@@ -49,8 +49,21 @@ public class Scene extends JFrame {
     private Snake snake;
 
     public void restart(){
-        System.out.println("Restarting...");
-        //todo restart function
+        quit = true;
+        Length.setText("1");  //重啟長度
+        Time.setText("");  //重設時間
+
+        snake.quit();
+        snake = null;
+        snake = new Snake(this);    //創建新的蛇物件
+
+        timer.reset();   //重製計時器
+
+        die = false;    //重製死亡標籤
+        quit = false;   //重製退出標籤
+        pause = false;  //重製暫停標籤
+
+        System.out.println("\nGame restart....");
     }
 
     public void updateLength(int length){
@@ -164,7 +177,7 @@ public class Scene extends JFrame {
         JMenu Help = new JMenu("Help");   Help.setFont(f);  bar.add(Help);     //創建並添加"幫助"選項
         JMenuItem remove_net = new JMenuItem("Remove net"); remove_net.setFont(f2); Settings.add(remove_net);
         JMenuItem remove_padding = new JMenuItem("Remove padding"); remove_padding.setFont(f2); Settings.add(remove_padding);
-
+        JMenuItem help = new JMenuItem("Guide....");  help.setFont(f2); Help.add(help);
 
         this.addKeyListener(new MyKeyListener());  //添加鍵盤的監聽器
         remove_net.addActionListener(e -> {
@@ -190,6 +203,7 @@ public class Scene extends JFrame {
             paintPanel.repaint();
         });
         //todo 完成"幫助"的觸發事件
+        help.addActionListener(e  -> new Help());  //顯示幫助
     }
 
 
