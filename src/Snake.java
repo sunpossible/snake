@@ -1,5 +1,6 @@
 import java.security.PublicKey;
 import java.util.Deque;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.concurrent.Executor;
@@ -89,13 +90,22 @@ public class Snake {
     }
 
     public boolean checkDeath(Coordinate coor){  //判斷一個座標是否超出邊界代表蛇死亡
+        //todo update
         int rows = GameUI.height;  //獲取區域大小的高
         int cols = GameUI.width;  //獲取區域大小的寬
         // 0 to 19
 
-        boolean result = coor.x < 0 || coor.x >= cols || coor.y < 0 ||coor.y >= rows;
+        if(coor.x < 0 || coor.x >= cols || coor.y < 0 ||coor.y >= rows) return true;
 
-        return result;
+        //檢查是否咬到自己
+        Iterator<Coordinate> iterator = body.iterator();
+        iterator.next();
+        while (iterator.hasNext()){
+            Coordinate part = iterator.next();
+            if(coor.x == part.x && coor.y == part.y) return true;
+        }
+
+        return false;
     }
 
     public boolean checkEat(Coordinate coor) {
